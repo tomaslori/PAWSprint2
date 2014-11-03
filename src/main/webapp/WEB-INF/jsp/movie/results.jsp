@@ -1,7 +1,7 @@
-<%@ include file="header.jsp"%>
+<%@ include file="../header.jsp"%>
 <div>
 	<h2>
-		Results for "<c:out value="${search}" />"
+		Results for "<c:out value="${director}" />"
 	</h2>
 	<ul>
 		<c:set var="row" value="0" />
@@ -29,4 +29,4 @@
 			</li>
 		</c:forEach>
 	</ul>
-<%@ include file="footer.jsp"%>
+<%@ include file="../footer.jsp"%>

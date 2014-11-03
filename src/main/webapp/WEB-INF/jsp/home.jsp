@@ -9,7 +9,7 @@
 			<li
 				<c:set var="row" value="${row + 1}" />>
 				<a
-				href="<c:url value="details"><c:param name="movie" value="${movie.name}" /></c:url>">${movie.name}</a>
+				href="<c:url value="movie/details"><c:param name="movie" value="${movie.name}" /></c:url>">${movie.name}</a>
 				<br />
 				<span>
 					Director: <c:out value="${movie.director}" />
@@ -38,7 +38,7 @@
 			<li
 				<c:set var="row" value="${row + 1}" />>
 				<a
-				href="<c:url value="details"><c:param name="movie" value="${movie.name}" /></c:url>">${movie.name}</a>
+				href="<c:url value="movie/details"><c:param name="movie" value="${movie.name}" /></c:url>">${movie.name}</a>
 				<br />
 				<span>
 					Director: <c:out value="${movie.director}" />

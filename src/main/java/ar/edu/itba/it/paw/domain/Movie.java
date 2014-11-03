@@ -116,6 +116,31 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 			this.releaseDate = releaseDate;
 	}
 	
+	public List<Comment> getComments() {
+		return comments;
+	}
+	
+	public void setComments(List<Comment> comments) {
+		if (comments == null)
+			throw new IllegalArgumentException();
+		else
+			this.comments = comments;
+	}
+	
+	public void addComment(Comment comment) {
+		if (comment != null && canCommented(comment.getOwner()))
+			comments.add(comment);
+		else
+			throw new IllegalArgumentException(); // TODO: check if another exception should be used..
+	}
+	
+	private boolean canCommented(User user) {
+		for(Comment comment :comments)
+			if(comment.getOwner().equals(user))
+				return false;
+		return true;
+	}
+	
 	@Override
 	public int compareTo(Movie o) {
 		return -releaseDate.compareTo(o.getReleaseDate());

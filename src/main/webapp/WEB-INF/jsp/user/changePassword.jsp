@@ -1,5 +1,5 @@
 
-<%@ include file="header.jsp" %>
+<%@ include file="../header.jsp" %>
 <div>
 	<div>
 		<h2>Recovering Password</h2>
@@ -40,4 +40,4 @@
 		</c:if>	
 		<a href="login"><button>Go back</button></a>
 	</div>
-<%@ include file="footer.jsp" %>
+<%@ include file="../footer.jsp" %>

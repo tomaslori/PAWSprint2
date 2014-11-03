@@ -18,22 +18,15 @@ public class HibernateUserRepo extends AbstractHibernateRepo implements
 	@Override
 	public User authenticate(String username, String password) {
 		List<User> result = find(
-				" from User where username = ? and password = ?", username,
+				" from User where email = ? and password = ?", username,
 				password);
 		return result.size() > 0 ? result.get(0) : null;
 	}
 
 	@Override
 	public User getUser(String username) {
-		List<User> result = find(" from User where username = ?", username);
+		List<User> result = find(" from User where email = ?", username);
 		return result.size() > 0 ? result.get(0) : null;
-	}
-
-	@Override
-	public List<User> getUsersWithName(String name) {
-		return find(" from User where username like '%" + name
-				+ "%' or (name like '%" + name + "%') or (surname like '%"
-				+ name + "%')");
 	}
 
 	@Override

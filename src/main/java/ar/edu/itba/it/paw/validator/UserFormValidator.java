@@ -1,5 +1,7 @@
 package ar.edu.itba.it.paw.validator;
 
+import java.util.Date;
+
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -23,11 +25,19 @@ public class UserFormValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) throws IllegalStateException {
 		UserForm userForm = (UserForm) target;
+		checkIfDateValid(userForm, errors);
 		checkEmptyInputs(userForm, errors);
 		checkInputLength(userForm, errors);
 		if(userForm.getPassword().length() > MIN_PASSWORD_LENGTH 
 				&& userForm.getPassword().length() < MAX_PASSWORD_LENGTH) { 
 			checkPasswordConfirm(userForm, errors);
+		}
+	}
+	
+	private void checkIfDateValid(UserForm userForm, Errors errors) {
+		Date compare = new Date();
+		if (compare.getTime() - userForm.getBirthDate().getTime() < 100) {
+			errors.rejectValue("birthDate", "invalid");
 		}
 	}
 
@@ -48,7 +58,7 @@ public class UserFormValidator implements Validator {
 		}
 		if (userForm.getEmail().length() > MAX_EMAIL_LENGTH
 				|| userForm.getEmail().length() == 0) {
-			errors.rejectValue("username", "length");
+			errors.rejectValue("email", "length");
 		}
 		if (userForm.getPassword().length() < MIN_PASSWORD_LENGTH
 				|| userForm.getPassword().length() > MAX_PASSWORD_LENGTH) {
@@ -76,7 +86,7 @@ public class UserFormValidator implements Validator {
 			errors.rejectValue("surname", "empty");
 		}
 		if (userForm.getEmail() == null) {
-			errors.rejectValue("username", "empty");
+			errors.rejectValue("email", "empty");
 		}
 		if (userForm.getPassword() == null) {
 			errors.rejectValue("password", "empty");

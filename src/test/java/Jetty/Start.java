@@ -15,7 +15,7 @@ public class Start {
 		server.setConnectors(new Connector[] { connector });
 		WebAppContext bb = new WebAppContext();
 		bb.setServer(server);
-		bb.setContextPath("/Sprint1");
+		bb.setContextPath("/Sprint2");
 		bb.setWar("src/main/webapp");
 		server.addHandler(bb);
 		try {

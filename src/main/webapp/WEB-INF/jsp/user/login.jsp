@@ -1,4 +1,4 @@
-<%@ include file="header.jsp" %>
+<%@ include file="../header.jsp" %>
 <div>
 	<div>	
 		<h2>Login</h2>
@@ -22,11 +22,11 @@
 	</div>
 	</p>
 	<div>
-		<a href="register">
+		<a href="registration">
 			<button>
 				Register
 			</button>
 		</a>
 	</div>
 </div>
-<%@ include file="footer.jsp" %>
+<%@ include file="../footer.jsp" %>

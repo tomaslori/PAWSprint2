@@ -21,25 +21,25 @@
 	<body>
 		<div>
 			<div>
-				<form method="POST" action="search">
-						<input type="text"  placeholder="Find movie by director" name="search" />
+				<form method="POST" action="${pageContext.request.contextPath}/bin/movie/search">
+						<input type="text"  placeholder="Find movie by director" name="director" />
 						<input type="submit" name="submit" value="Search" />
 				</form>
 			</div>
 			<div >
 				<div>
-					<a href="/Sprint1"> home </a>
+					<a href="${pageContext.request.contextPath}/bin/home"> home </a>
 				</div>
-				<c:if test="${isLogged}">
+				<c:if test="${not empty email}">
 					<div>
-						<p><c:out value="${userSession.email}" /></p>
+						<a href="${pageContext.request.contextPath}/bin/user/profile">${email}</a>
 						<br>
-						<a href="logout">Log out</a>
+						<a href="${pageContext.request.contextPath}/bin/user/logout">Log out</a>
 					</div>
 				</c:if>
-				<c:if test="${!isLogged}">
+				<c:if test="${empty email}">
 					<div>
-						<a href="login">Log in</a>
+						<a href="${pageContext.request.contextPath}/bin/user/login">Log in</a>
 					</div>
 				</c:if>
 			</div>
