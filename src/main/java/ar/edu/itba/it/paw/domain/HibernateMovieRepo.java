@@ -1,5 +1,8 @@
 package ar.edu.itba.it.paw.domain;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -33,7 +36,34 @@ public class HibernateMovieRepo extends AbstractHibernateRepo implements
 	
 	@Override
 	public List<Movie> getTop5() {
-		return find("");  //TODO: copy query
+		List<Movie> results = getAllMovies();
+		
+		Comparator<Movie> comp = new Comparator<Movie>() {
+
+			@Override
+			public int compare(Movie m1, Movie m2) {
+				
+				Float rating1 = 0.f;
+				for (Comment c : m1.getComments())
+					rating1 += c.getRating();
+				rating1 /= m1.getComments().size();
+				
+				Float rating2 = 0.f;
+				for (Comment c : m2.getComments())
+					rating2 += c.getRating();
+				rating2 /= m2.getComments().size();
+				
+				return (int)((rating2 - rating1)/Math.abs(rating2 - rating1));
+			}
+			
+		};
+		
+		Collections.sort(results, comp); 
+		List<Movie> ret = new ArrayList<Movie>();
+		for (int i=0 ; i<5 && i<results.size() ; i++)
+			ret.add(results.get(i));
+		
+		return ret;
 	}
 
 	@Override

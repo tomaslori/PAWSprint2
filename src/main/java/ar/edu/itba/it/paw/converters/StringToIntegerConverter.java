@@ -11,7 +11,7 @@ public class StringToIntegerConverter implements Converter<String, Integer> {
 		try {
 			return Integer.parseInt(arg0);
 		} catch (NumberFormatException e) {
-			return 0;
+			return -1;
 		}
 	}
 }

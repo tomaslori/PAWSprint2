@@ -5,26 +5,29 @@
 	</h2>
 	<ul>
 		<c:set var="row" value="0" />
-		<c:forEach items="${topmovies}" var="movie">
+		<c:forEach items="${topmovies}" varStatus="loop">
 			<li
 				<c:set var="row" value="${row + 1}" />>
 				<a
-				href="<c:url value="movie/details"><c:param name="movie" value="${movie.name}" /></c:url>">${movie.name}</a>
+				href="<c:url value="movie/details"><c:param name="movie" value="${topmovies[loop.index].name}" /></c:url>">${topmovies[loop.index].name}</a>
 				<br />
 				<span>
-					Director: <c:out value="${movie.director}" />
+					Rating: <c:out value="${topratings[loop.index]}" />
 				</span>
 				<span>
-					Genre: <c:out value="${movie.genre}" />
+					Director: <c:out value="${topmovies[loop.index].director}" />
 				</span>
 				<span>
-					Description: <c:out value="${movie.description}" />
+					Genres: <c:forEach items="${topmovies[loop.index].genres}" var="genre"> <c:out value="${genre.name}"/> </c:forEach>
 				</span>
 				<span>
-					duration: <c:out value="${movie.duration}" /> 
+					Description: <c:out value="${topmovies[loop.index].description}" />
 				</span>
 				<span>
-					ReleaseDate: <c:out value="${movie.releaseDate}" />
+					duration: <c:out value="${topmovies[loop.index].duration}" /> 
+				</span>
+				<span>
+					ReleaseDate: <c:out value="${topmovies[loop.index].releaseDate}" />
 				</span>
 			</li>
 		</c:forEach>
@@ -44,7 +47,7 @@
 					Director: <c:out value="${movie.director}" />
 				</span>
 				<span>
-					Genre: <c:out value="${movie.genre}" />
+					Genres: <c:forEach items="${movie.genres}" var="genre"> <c:out value="${genre.name}"/> </c:forEach>
 				</span>
 				<span>
 					Description: <c:out value="${movie.description}" />

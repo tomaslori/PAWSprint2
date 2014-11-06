@@ -21,7 +21,7 @@
 	<body>
 		<div>
 			<div>
-				<form method="POST" action="${pageContext.request.contextPath}/bin/movie/search">
+				<form method="GET" action="${pageContext.request.contextPath}/bin/movie/search">
 						<input type="text"  placeholder="Find movie by director" name="director" />
 						<input type="submit" name="submit" value="Search" />
 				</form>

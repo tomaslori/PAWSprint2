@@ -15,7 +15,7 @@
 					Director: <c:out value="${movie.director}" />
 				</span>
 				<span>
-					Genre: <c:out value="${movie.genre}" />
+					Genres: <c:forEach items="${movie.genres}" var="genre"> <c:out value="${genre.name}"/> </c:forEach>
 				</span>
 				<span>
 					Description: <c:out value="${movie.description}" />

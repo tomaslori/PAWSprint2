@@ -94,6 +94,6 @@ public class UserForm {
 	
 
 	public User build() throws IOException {
-		return new User(name, surname, email, password,	secretQuestion, secretAnswer, birthDate, false);
+		return new User(name, surname, email, password,	secretQuestion, secretAnswer, birthDate, false, false);
 	}
 }

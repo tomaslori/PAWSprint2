@@ -33,13 +33,14 @@ public class User extends PersistentEntity {
 	@Column(nullable = false)
 	private Date birthDate;
 
-	private boolean vip; 
+	private boolean vip;
+	
+	private boolean admin;
 
-	// TODO: preguntar si esto es necesario!
 	public User() { }
 	
 	public User(String name, String surname, String email, String password,
-			String secretQuestion, String secretAnswer, Date birthDate, boolean vip)
+			String secretQuestion, String secretAnswer, Date birthDate, boolean vip, boolean admin)
 			throws IllegalArgumentException {
 
 		setName(name);
@@ -50,13 +51,14 @@ public class User extends PersistentEntity {
 		setSecretAnswer(secretAnswer);
 		setBirthDate(birthDate);
 		setVip(vip);
+		setAdmin(admin);
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) throws IllegalArgumentException {
+	private void setName(String name) throws IllegalArgumentException {
 		if(name == null)
 			throw new IllegalArgumentException();
 		else
@@ -67,7 +69,7 @@ public class User extends PersistentEntity {
 		return surname;
 	}
 
-	public void setSurname(String surname) throws IllegalArgumentException {
+	private void setSurname(String surname) throws IllegalArgumentException {
 		if(surname == null)
 			throw new IllegalArgumentException();
 		else
@@ -78,7 +80,7 @@ public class User extends PersistentEntity {
 		return email;
 	}
 
-	public void setEmail(String email) throws IllegalArgumentException {
+	private void setEmail(String email) throws IllegalArgumentException {
 		if (email == null || !email.matches("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"))
 			throw new IllegalArgumentException();
 		else
@@ -100,7 +102,7 @@ public class User extends PersistentEntity {
 		return secretQuestion;
 	}
 
-	public void setSecretQuestion(String secretQuestion) throws IllegalArgumentException {
+	private void setSecretQuestion(String secretQuestion) throws IllegalArgumentException {
 		if(secretQuestion == null)
 			throw new IllegalArgumentException();
 		else
@@ -111,7 +113,7 @@ public class User extends PersistentEntity {
 		return secretAnswer;
 	}
 
-	public void setSecretAnswer(String secretAnswer) throws IllegalArgumentException {
+	private void setSecretAnswer(String secretAnswer) throws IllegalArgumentException {
 		if(secretAnswer == null)
 			throw new IllegalArgumentException();
 		else
@@ -122,7 +124,7 @@ public class User extends PersistentEntity {
 		return birthDate;
 	}
 
-	public void setBirthDate(Date birthDate) throws IllegalArgumentException {
+	private void setBirthDate(Date birthDate) throws IllegalArgumentException {
 		if(birthDate == null)
 			throw new IllegalArgumentException();
 		else
@@ -133,9 +135,18 @@ public class User extends PersistentEntity {
 		return vip;
 	}
 	
-	public void setVip(boolean vip) {
+	private void setVip(boolean vip) {
 		this.vip = vip;
 	}
+	
+	public boolean getAdmin() {
+		return admin;
+	}
+	
+	private void setAdmin(boolean admin) {
+		this.admin = admin;
+	}
+	
 	
 	@Override
 	public int hashCode() {

@@ -1,8 +1,8 @@
 package ar.edu.itba.it.paw.domain;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,8 +20,8 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 	@Column(nullable = false)
 	private String name;
 	
-	@Column(nullable = false)
-	private String genre;
+	@OneToMany(cascade = CascadeType.ALL)
+	private Set<Genre> genres;
 	
 	@Column(nullable = false)
 	private String director;
@@ -33,20 +33,23 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 	
 	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
 	private List<Comment> comments;
+	
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<Distinction> distinctions;
 
-	// TODO: preguntar si esto es necesario!
+
 	public Movie() { }
 	
-	public Movie(String name, Date releaseDate, String genre, String director,
-			int duration, String description) throws IllegalArgumentException {
+	public Movie(String name, Date releaseDate, Set<Genre> genres, String director,
+			int duration, String description, List<Comment> comments) throws IllegalArgumentException {
 
 		setName(name);
-		setGenre(genre);
+		setGenres(genres);
 		setDirector(director);
 		setDuration(duration);
 		setDescription(description);
 		setReleaseDate(releaseDate);
-		comments = new ArrayList<Comment>();
+		setComments(comments);
 	}
 
 	public String getName() {
@@ -60,15 +63,15 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 			this.name = name;
 	}
 
-	public String getGenre() {
-		return genre;
+	public Set<Genre> getGenres() {
+		return genres;
 	}
 
-	public void setGenre(String genre) throws IllegalArgumentException {
-		if(genre == null)
+	public void setGenres(Set<Genre> genres) throws IllegalArgumentException {
+		if(genres == null)
 			throw new IllegalArgumentException();
 		else
-			this.genre = genre;
+			this.genres = genres;
 	}
 
 	public String getDirector() {
@@ -128,17 +131,27 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 	}
 	
 	public void addComment(Comment comment) {
-		if (comment != null && canCommented(comment.getOwner()))
+		if (comment != null && (getCommentFrom(comment.getOwner()) == null))
 			comments.add(comment);
 		else
-			throw new IllegalArgumentException(); // TODO: check if another exception should be used..
+			throw new IllegalArgumentException();
 	}
 	
-	private boolean canCommented(User user) {
-		for(Comment comment :comments)
-			if(comment.getOwner().equals(user))
-				return false;
-		return true;
+	public Comment getCommentFrom(User user) {
+		for (Comment comment :comments)
+			if (comment.getOwner().equals(user))
+				return comment;
+		return null;
+	}
+	
+	public void removeCommentFrom(User user) {
+		int toRemove = -1;
+		for (int i=0; i<comments.size() ;i++)
+			if (comments.get(i).getOwner().equals(user))
+				toRemove = i;
+		
+		if(toRemove != -1)
+			comments.remove(toRemove);
 	}
 	
 	@Override

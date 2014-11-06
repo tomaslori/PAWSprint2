@@ -1,8 +1,12 @@
 package ar.edu.itba.it.paw.domain;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -23,16 +27,19 @@ public class Comment extends PersistentEntity implements Comparable<Comment> {
 	private String description;
 	
 	private int rating;
+	
+	@OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
+	private List<Review> reviews;
 
-	// TODO: preguntar si esto es necesario!
 	public Comment() { }
 
-	public Comment(User owner, Movie movie, int rating, String description) throws IllegalArgumentException {
+	public Comment(User owner, Movie movie, int rating, String description, List<Review> reviews) throws IllegalArgumentException {
 
 		setOwner(owner);
 		setMovie(movie);
 		setRating(rating);
 		setDescription(description);
+		setReviews(reviews);
 	}
 
 
@@ -40,7 +47,7 @@ public class Comment extends PersistentEntity implements Comparable<Comment> {
 		return owner;
 	}
 
-	public void setOwner(User owner) throws IllegalArgumentException {
+	private void setOwner(User owner) throws IllegalArgumentException {
 		if (owner == null)
 			throw new IllegalArgumentException();
 		else
@@ -51,7 +58,7 @@ public class Comment extends PersistentEntity implements Comparable<Comment> {
 		return movie;
 	}
 
-	public void setMovie(Movie movie) throws IllegalArgumentException {
+	private void setMovie(Movie movie) throws IllegalArgumentException {
 		if (movie == null)
 			throw new IllegalArgumentException();
 		else
@@ -62,7 +69,7 @@ public class Comment extends PersistentEntity implements Comparable<Comment> {
 		return rating;
 	}
 
-	public void setRating(int rating) throws IllegalArgumentException {
+	private void setRating(int rating) throws IllegalArgumentException {
 		if (rating < MIN_RATING || rating > MAX_RATING)
 			throw new IllegalArgumentException();
 		else
@@ -73,16 +80,53 @@ public class Comment extends PersistentEntity implements Comparable<Comment> {
 		return description;
 	}
 
-	public void setDescription(String description) throws IllegalArgumentException {
+	private void setDescription(String description) throws IllegalArgumentException {
 		if (description == null || description.length() > MAX_DESCRIPTION_LENGTH)
 			throw new IllegalArgumentException();
 		else
 			this.description = description;
 	}
 	
+	public List<Review> getReviews() {
+		return reviews;
+	}
+	
+	private void setReviews(List<Review> reviews) {
+		if (reviews == null)
+			throw new IllegalArgumentException();
+		else
+			this.reviews = reviews;
+	}
+	
+	public void addReview(Review review) {
+		if (review != null && (getReviewFrom(review.getOwner()) == null))
+			reviews.add(review);
+		else
+			throw new IllegalArgumentException();
+	}
+	
+	public Review getReviewFrom(User user) {
+		for(Review review :reviews)
+			if(review.getOwner().equals(user))
+				return review;
+		return null;
+	}
+		
+	
 	@Override
-	public int compareTo(Comment o) {
-		return rating - o.getRating();
+	public int compareTo(Comment c) {
+		
+		Float myRating = 0.f;
+		for (Review r : reviews)
+			myRating += r.getRating();
+		myRating /= reviews.size();
+		
+		Float otherRating = 0.f;
+		for (Review r : c.getReviews())
+			otherRating += r.getRating();
+		otherRating /= c.getReviews().size();
+		
+		return (int)((otherRating - myRating)/Math.abs(otherRating - myRating));
 	}
 
 	@Override
