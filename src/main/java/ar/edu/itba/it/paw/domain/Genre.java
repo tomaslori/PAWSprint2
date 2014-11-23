@@ -1,12 +1,12 @@
 package ar.edu.itba.it.paw.domain;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import javax.persistence.Table;
 
-@Entity
+@Embeddable
 @Table(name = "genres")
-public class Genre extends PersistentEntity {
+public class Genre {
 	
 	@Column(nullable = false)
 	private String name;

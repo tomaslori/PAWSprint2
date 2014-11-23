@@ -10,6 +10,9 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
+
 @Entity
 @Table(name = "movies")
 public class Movie extends PersistentEntity implements Comparable<Movie> {
@@ -20,7 +23,7 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 	@Column(nullable = false)
 	private String name;
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@CollectionOfElements
 	private Set<Genre> genres;
 	
 	@Column(nullable = false)
@@ -32,16 +35,17 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 	private String description;
 	
 	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
+	@Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<Comment> comments;
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@CollectionOfElements
 	private List<Distinction> distinctions;
 
 
 	public Movie() { }
 	
 	public Movie(String name, Date releaseDate, Set<Genre> genres, String director,
-			int duration, String description, List<Comment> comments) throws IllegalArgumentException {
+			int duration, String description, List<Comment> comments, List<Distinction> distinctions) throws IllegalArgumentException {
 
 		setName(name);
 		setGenres(genres);
@@ -50,6 +54,7 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 		setDescription(description);
 		setReleaseDate(releaseDate);
 		setComments(comments);
+		setDistinctions(distinctions);
 	}
 
 	public String getName() {
@@ -152,6 +157,17 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 		
 		if(toRemove != -1)
 			comments.remove(toRemove);
+	}
+	
+	public List<Distinction> getDistinctions() {
+		return distinctions;
+	}
+
+	public void setDistinctions(List<Distinction> distinctions) throws IllegalArgumentException {
+		if(distinctions == null)
+			throw new IllegalArgumentException();
+		else
+			this.distinctions = distinctions;
 	}
 	
 	@Override

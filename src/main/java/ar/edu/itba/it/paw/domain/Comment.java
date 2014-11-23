@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+
 @Entity
 @Table(name = "comments")
 public class Comment extends PersistentEntity implements Comparable<Comment> {
@@ -29,6 +31,7 @@ public class Comment extends PersistentEntity implements Comparable<Comment> {
 	private int rating;
 	
 	@OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
+	@Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<Review> reviews;
 
 	public Comment() { }
@@ -103,6 +106,13 @@ public class Comment extends PersistentEntity implements Comparable<Comment> {
 			reviews.add(review);
 		else
 			throw new IllegalArgumentException();
+	}
+	
+	public float getReviewsAvg() {
+		float sum = 0;
+		for(Review review :reviews)
+			sum += review.getRating();
+		return sum /reviews.size();
 	}
 	
 	public Review getReviewFrom(User user) {

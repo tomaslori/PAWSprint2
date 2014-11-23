@@ -25,6 +25,10 @@
 			<h5>
 				<c:out value="${movie.description}" />
 			</h5>
+			<h6>Distinctions:</h6>
+			<c:forEach items="${movie.distinctions}" var="distinction">
+				<h5> ${distinction.name} </h5>
+			</c:forEach>
 		</div>
 	</div>
 	<h2>

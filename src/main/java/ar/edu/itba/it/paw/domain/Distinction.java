@@ -1,12 +1,12 @@
 package ar.edu.itba.it.paw.domain;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "genres")
-public class Distinction extends PersistentEntity {
+@Embeddable
+@Table(name = "distinctions")
+public class Distinction {
 	
 	@Column(nullable = false)
 	private String name;
@@ -15,10 +15,19 @@ public class Distinction extends PersistentEntity {
 	
 	public Distinction() { }
 
-	public Distinction(String name) throws IllegalArgumentException {
+	public Distinction(String name, boolean gotPrized) throws IllegalArgumentException {
 		setName(name);
+		setGotPrized(gotPrized);
 	}
 
+	
+	public boolean getGotPrized() {
+		return gotPrized;
+	}
+
+	private void setGotPrized(boolean gotPrized) {
+		this.gotPrized = gotPrized;
+	}
 
 	public String getName() {
 		return name;
