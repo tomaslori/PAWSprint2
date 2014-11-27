@@ -42,7 +42,7 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 	private List<Distinction> distinctions;
 
 
-	public Movie() { }
+	Movie() { }
 	
 	public Movie(String name, Date releaseDate, Set<Genre> genres, String director,
 			int duration, String description, List<Comment> comments, List<Distinction> distinctions) throws IllegalArgumentException {
@@ -77,6 +77,18 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 			throw new IllegalArgumentException();
 		else
 			this.genres = genres;
+	}
+	
+	public void addGenre(Genre genre) {
+		if (genre != null)
+			genres.add(genre);
+		else
+			throw new IllegalArgumentException();
+	}
+	
+	public void removeGenre(Genre genre) {
+		if (genre != null)
+			genres.remove(genre);
 	}
 
 	public String getDirector() {
@@ -168,6 +180,23 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 			throw new IllegalArgumentException();
 		else
 			this.distinctions = distinctions;
+	}
+	
+	public void addDistinction(Distinction dist) {
+		if (dist != null)
+			distinctions.add(dist);
+		else
+			throw new IllegalArgumentException();
+	}
+	
+	public void removeDistinction(Distinction distinction) {
+		int toRemove = -1;
+		for (int i=0; i<distinctions.size() ;i++)
+			if (distinctions.get(i).getName().equals(distinction.getName()))
+				toRemove = i;
+		
+		if(toRemove != -1)
+			distinctions.remove(toRemove);
 	}
 	
 	@Override

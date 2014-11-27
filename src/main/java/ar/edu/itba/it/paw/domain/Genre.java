@@ -11,7 +11,7 @@ public class Genre {
 	@Column(nullable = false)
 	private String name;
 	
-	public Genre() { }
+	Genre() { }
 
 	public Genre(String name) throws IllegalArgumentException {
 		setName(name);

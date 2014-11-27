@@ -104,13 +104,17 @@ public class UserController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView changePassword(
-			@RequestParam(value = "userToRecover", required = false) User user)  {
+			@RequestParam(value = "userToRecover", required = false) User user,
+			@RequestParam(value = "userSelected", required = false) Boolean userSelected)  {
+		
 		ModelAndView mav = new ModelAndView();
 		if (user != null) {
 			mav.addObject("success", "Recovering password for " + user.getEmail());
 			mav.addObject("user", user);
 			mav.addObject("userSelected", true);
 		} else {
+			if (userSelected != null)
+				mav.addObject("error", "Invalid user email.");
 			mav.addObject("userSelected", false);
 		}
 			
@@ -156,19 +160,6 @@ public class UserController {
 	
 
 /*
- 
-
-	@RequestMapping(value = "/user/delete/{id}", method = RequestMethod.GET)
-	public String delete(@PathVariable Integer id) {
-		if (id != null) {
-			Comment comment = commentRepo.getComment(id);
-			if (comment != null) {
-				commentRepo.delete(comment);
-			}
-		}
-		return "redirect:../home";
-	}
-	
 
 
 	@RequestMapping(method = RequestMethod.GET)

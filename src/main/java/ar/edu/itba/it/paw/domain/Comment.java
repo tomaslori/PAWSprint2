@@ -34,7 +34,7 @@ public class Comment extends PersistentEntity implements Comparable<Comment> {
 	@Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<Review> reviews;
 
-	public Comment() { }
+	Comment() { }
 
 	public Comment(User owner, Movie movie, int rating, String description, List<Review> reviews) throws IllegalArgumentException {
 

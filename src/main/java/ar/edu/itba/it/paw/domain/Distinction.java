@@ -13,7 +13,7 @@ public class Distinction {
 	
 	private boolean gotPrized;
 	
-	public Distinction() { }
+	Distinction() { }
 
 	public Distinction(String name, boolean gotPrized) throws IllegalArgumentException {
 		setName(name);

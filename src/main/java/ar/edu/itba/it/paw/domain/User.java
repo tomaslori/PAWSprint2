@@ -37,7 +37,7 @@ public class User extends PersistentEntity {
 	
 	private boolean admin;
 
-	public User() { }
+	User() { }
 	
 	public User(String name, String surname, String email, String password,
 			String secretQuestion, String secretAnswer, Date birthDate, boolean vip, boolean admin)
