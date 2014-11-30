@@ -1,5 +1,6 @@
 package ar.edu.itba.it.paw.domain;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +35,8 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 	@Column(nullable = false)
 	private String description;
 	
+	private byte[] image;
+	
 	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
 	@Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<Comment> comments;
@@ -45,7 +48,7 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 	Movie() { }
 	
 	public Movie(String name, Date releaseDate, Set<Genre> genres, String director,
-			int duration, String description, List<Comment> comments, List<Distinction> distinctions) throws IllegalArgumentException {
+			int duration, String description, byte[] image, List<Comment> comments, List<Distinction> distinctions) throws IllegalArgumentException {
 
 		setName(name);
 		setGenres(genres);
@@ -53,6 +56,7 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 		setDuration(duration);
 		setDescription(description);
 		setReleaseDate(releaseDate);
+		setImage(image);
 		setComments(comments);
 		setDistinctions(distinctions);
 	}
@@ -124,6 +128,17 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 			this.description = description;
 	}
 
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
+	
+	public boolean getImageIsEmpty() {
+		return image == null;
+	}
 
 	public Date getReleaseDate() {
 		return releaseDate;
@@ -137,6 +152,7 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 	}
 	
 	public List<Comment> getComments() {
+		Collections.sort(comments);
 		return comments;
 	}
 	
@@ -197,6 +213,17 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 		
 		if(toRemove != -1)
 			distinctions.remove(toRemove);
+	}
+	
+	public void updateData(Movie movie) {
+		setName(movie.getName());
+		setGenres(movie.getGenres());
+		setDirector(movie.getDirector());
+		setDuration(movie.getDuration());
+		setDescription(movie.getDescription());
+		setReleaseDate(movie.getReleaseDate());
+		setComments(movie.getComments());
+		setDistinctions(movie.getDistinctions());
 	}
 	
 	@Override

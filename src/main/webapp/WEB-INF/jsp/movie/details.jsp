@@ -2,7 +2,13 @@
 <div>
 	<div>
 		<div>
-			<h3><c:out value="${movie.name}" /></h3>
+			<h3><c:out value="${movie.name}" /></h3>  
+			<c:if test="${isAdmin}">	 
+				<form method="GET" action="edit">
+						<input type="hidden" name="movie" value="${movie.name}">
+						<input type="submit" name="submit" value="Edit" />
+				</form>
+			</c:if>
 			<h6>Release Date:</h6>
 			<h5>
 				<c:out value="${movie.releaseDate}" />

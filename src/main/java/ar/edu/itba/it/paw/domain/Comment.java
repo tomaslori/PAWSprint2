@@ -17,26 +17,28 @@ public class Comment extends PersistentEntity implements Comparable<Comment> {
 
 	private static final int MAX_DESCRIPTION_LENGTH = 140;
 	private static final int MIN_RATING = 0;
-	private static final int MAX_RATING = 5;	
-	
+	private static final int MAX_RATING = 5;
+
 	@ManyToOne
 	private User owner;
-	
+
 	@ManyToOne
 	private Movie movie;
 
 	@Column(nullable = false)
 	private String description;
-	
+
 	private int rating;
-	
+
 	@OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
 	@Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<Review> reviews;
 
-	Comment() { }
+	Comment() {
+	}
 
-	public Comment(User owner, Movie movie, int rating, String description, List<Review> reviews) throws IllegalArgumentException {
+	public Comment(User owner, Movie movie, int rating, String description,
+			List<Review> reviews) throws IllegalArgumentException {
 
 		setOwner(owner);
 		setMovie(movie);
@@ -44,7 +46,6 @@ public class Comment extends PersistentEntity implements Comparable<Comment> {
 		setDescription(description);
 		setReviews(reviews);
 	}
-
 
 	public User getOwner() {
 		return owner;
@@ -56,7 +57,7 @@ public class Comment extends PersistentEntity implements Comparable<Comment> {
 		else
 			this.owner = owner;
 	}
-	
+
 	public Movie getMovie() {
 		return movie;
 	}
@@ -78,65 +79,56 @@ public class Comment extends PersistentEntity implements Comparable<Comment> {
 		else
 			this.rating = rating;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
 
-	private void setDescription(String description) throws IllegalArgumentException {
-		if (description == null || description.length() > MAX_DESCRIPTION_LENGTH)
+	private void setDescription(String description)
+			throws IllegalArgumentException {
+		if (description == null
+				|| description.length() > MAX_DESCRIPTION_LENGTH)
 			throw new IllegalArgumentException();
 		else
 			this.description = description;
 	}
-	
+
 	public List<Review> getReviews() {
 		return reviews;
 	}
-	
+
 	private void setReviews(List<Review> reviews) {
 		if (reviews == null)
 			throw new IllegalArgumentException();
 		else
 			this.reviews = reviews;
 	}
-	
+
 	public void addReview(Review review) {
 		if (review != null && (getReviewFrom(review.getOwner()) == null))
 			reviews.add(review);
 		else
 			throw new IllegalArgumentException();
 	}
-	
+
 	public float getReviewsAvg() {
 		float sum = 0;
-		for(Review review :reviews)
+		for (Review review : reviews)
 			sum += review.getRating();
-		return sum /reviews.size();
+		return (reviews.size() == 0)? sum : sum / reviews.size();
 	}
-	
+
 	public Review getReviewFrom(User user) {
-		for(Review review :reviews)
-			if(review.getOwner().equals(user))
+		for (Review review : reviews)
+			if (review.getOwner().equals(user))
 				return review;
 		return null;
 	}
-		
-	
+
 	@Override
 	public int compareTo(Comment c) {
-		
-		Float myRating = 0.f;
-		for (Review r : reviews)
-			myRating += r.getRating();
-		myRating /= reviews.size();
-		
-		Float otherRating = 0.f;
-		for (Review r : c.getReviews())
-			otherRating += r.getRating();
-		otherRating /= c.getReviews().size();
-		
-		return (int)((otherRating - myRating)/Math.abs(otherRating - myRating));
+		float val = c.getReviewsAvg() - this.getReviewsAvg();
+		return Math.round(val / Math.abs(val));
 	}
 
 	@Override

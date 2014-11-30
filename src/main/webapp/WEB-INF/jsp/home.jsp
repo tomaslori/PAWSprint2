@@ -35,6 +35,11 @@
 	<h2>
 		Others
 	</h2>
+	<c:if test="${isAdmin}">	 
+		<form method="GET" action="movie/edit">
+				<input type="submit" name="submit" value="Add Movie" />
+		</form>
+	</c:if>
 	<ul>
 		<c:set var="row" value="0" />
 		<c:forEach items="${movies}" var="movie">

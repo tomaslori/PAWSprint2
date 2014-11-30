@@ -1,13 +1,11 @@
 package ar.edu.itba.it.paw.command;
 
-import java.io.IOException;
 import java.util.Date;
 
 import ar.edu.itba.it.paw.domain.User;
 
 public class UserForm {
 
-	private User user;
 	private String name;
 	private String surname;
 	private String email;
@@ -18,14 +16,6 @@ public class UserForm {
 	private Date birthDate;
 
 	public UserForm() {
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
 	}
 
 	public String getName() {
@@ -93,7 +83,7 @@ public class UserForm {
 	}
 	
 
-	public User build() throws IOException {
+	public User build() {
 		return new User(name, surname, email, password,	secretQuestion, secretAnswer, birthDate, false, false);
 	}
 }

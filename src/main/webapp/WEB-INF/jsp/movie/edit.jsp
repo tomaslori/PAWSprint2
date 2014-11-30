@@ -3,7 +3,7 @@
 <div>
 	<h2>Movie edit</h2>
 	<div><c:out value="${error}" /></div>
-	<form:form method="POST" action="registration" modelAttribute="userForm" enctype="multipart/form-data">
+	<form:form method="POST" action="edit" modelAttribute="movieForm" enctype="multipart/form-data">
 		<div>
 			<label for="name">Name:</label>
 			<div>
@@ -37,7 +37,7 @@
 				<form:errors path="duration" />
 			</div>
 			<div>
-				<form:input type="number"  min="0" path="duration" />
+				<form:input type="number" min="0" path="duration" />
 			</div>
 		</div>
 		<div>
@@ -54,37 +54,54 @@
 		</div>
 	</form:form>
 	
-	<h2> Genres </h2>
-	<c:forEach items="${movie.genres}" var="genre">
-		<c:out value="${genre.name}"/>
-		<form method="POST" action="deleteGenre">
-			<input type="hidden" name="movie" value="${movie.name}">
-			<input type="hidden" name="genre" value="${genre.name}">
-			<input type="submit" name="submit" value="Submit" />
+	<c:if test="${!isNew}">	 
+		<h2> Genres </h2>
+		<c:forEach items="${movieForm.genres}" var="genre">
+			<c:out value="${genre.name}"/>
+			<form method="POST" action="deleteGenre">
+				<input type="hidden" name="movie" value="${movieForm.name}">
+				<input type="hidden" name="genre" value="${genre.name}">
+				<input type="submit" name="submit" value="Delete" />
+			</form>
+		</c:forEach>
+		<form method="POST" action="addGenre">
+			<input type="hidden" name="movie" value="${movieForm.name}">
+			<label for="name">Name:</label>
+			<input type="text" name="name" value="${name}"/>
+			<input type="submit" name="submit" value="Add" />
 		</form>
-	</c:forEach>
-	<form method="POST" action="addGenre">
-		<input type="hidden" name="movie" value="${movie.name}">
-		<label for="name">Name:</label>
-		<input type="text" name="name" value="${name}"/>
-		<input type="submit" name="submit" value="Submit" />
-	</form>
-	
-	<h2> Distinctions </h2>
-	<c:forEach items="${movie.distinctions}" var="dist">
-		<c:out value="${dist.name}"/>
-		<form method="POST" action="deleteDistinction">
-			<input type="hidden" name="movie" value="${movie.name}">
-			<input type="hidden" name="distinction" value="${dist.name}">
-			<input type="submit" name="submit" value="Submit" />
+		
+		<h2> Distinctions </h2>
+		<c:forEach items="${movieForm.distinctions}" var="dist">
+			<c:out value="${dist.name}"/>
+			<form method="POST" action="deleteDistinction">
+				<input type="hidden" name="movie" value="${movieForm.name}">
+				<input type="hidden" name="distinction" value="${dist.name}">
+				<input type="submit" name="submit" value="Delete" />
+			</form>
+		</c:forEach>
+		<form method="POST" action="addDistinction">
+			<input type="hidden" name="movie" value="${movieForm.name}">
+			<label for="name">Name:</label>
+			<input type="text" name="name" value="${name}"/>
+			<input type="submit" name="submit" value="Add" />
 		</form>
-	</c:forEach>
-	<form method="POST" action="addDistinction">
-		<input type="hidden" name="movie" value="${movie.name}">
-		<label for="name">Name:</label>
-		<input type="text" name="name" value="${name}"/>
-		<input type="submit" name="submit" value="Submit" />
-	</form>
+		
+		<c:if test="${!movieForm.imageIsEmpty}">
+			<img src="../image?movie=<c:out value="${movieForm.name}" />"
+				alt="movie_picture" />
+			<form method="POST" action="deleteImage">
+				<input type="hidden" name="movie" value="${movieForm.name}">
+				<input type="submit" value="delete" />
+			</form>
+		</c:if>
+		
+		<form method="POST" action="changeImage" enctype="multipart/form-data">
+			<input type="hidden" name="movie" value="${movieForm.name}">
+			<input type="file" name="file"/>
+			<input type="submit" value="Upload Image" />
+		</form>
+	</c:if>
 	
 	
 </div>

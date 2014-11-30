@@ -92,9 +92,10 @@ public class UserController {
 		if (errors.hasErrors())
 			return null;
 
-		try {
-			userRepo.registerUser(userForm.build());
-		} catch (Exception e) {
+		User user = userForm.build();
+		if (userRepo.getUser(user.getEmail()) == null)
+			userRepo.registerUser(user);
+		else {
 			errors.rejectValue("email", "duplicated");
 			return null;
 		}

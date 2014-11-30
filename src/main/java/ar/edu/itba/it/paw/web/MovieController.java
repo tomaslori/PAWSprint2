@@ -1,9 +1,13 @@
 package ar.edu.itba.it.paw.web;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -13,10 +17,11 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.itba.it.paw.command.MovieForm;
-import ar.edu.itba.it.paw.command.UserForm;
 import ar.edu.itba.it.paw.domain.Comment;
 import ar.edu.itba.it.paw.domain.Distinction;
 import ar.edu.itba.it.paw.domain.Genre;
@@ -26,7 +31,6 @@ import ar.edu.itba.it.paw.domain.Review;
 import ar.edu.itba.it.paw.domain.User;
 import ar.edu.itba.it.paw.domain.UserRepo;
 import ar.edu.itba.it.paw.validator.MovieFormValidator;
-import ar.edu.itba.it.paw.validator.UserFormValidator;
 
 @Controller
 public class MovieController {
@@ -137,7 +141,6 @@ public class MovieController {
 				} else {
 					Comment c = new Comment(user, movie, rating, description, new ArrayList<Review>());
 					movie.addComment(c);
-					movieRepo.registerMovie(movie);
 					
 					for (Comment comm : movie.getComments())
 						System.out.println(comm.getOwner().getEmail() + ": " + comm.getDescription());
@@ -158,68 +161,126 @@ public class MovieController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String delete(
 			@RequestParam(value = "commentMovie", required = true) Movie movie,
-			@RequestParam(value = "commentOwner", required = true) User commentOwner) {
+			@RequestParam(value = "commentOwner", required = true) User commentOwner,
+			HttpSession s) {
 
-		movie.removeCommentFrom(commentOwner);
-		movieRepo.registerMovie(movie);
+		String email = (String) s.getAttribute("email");
+		
+		if (email != null) {
+			User user = userRepo.getUser(email);
+			if (user != null && user.getAdmin()) {
+		
+				movie.removeCommentFrom(commentOwner);
+			}
+		}
 		return "redirect:./details?movie=" + movie.getName();
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public String deleteGenre(
 			@RequestParam(value = "movie", required = true) Movie movie,
-			@RequestParam(value = "genre", required = true) Genre genre) {
+			@RequestParam(value = "genre", required = true) Genre genre,
+			HttpSession s) {
 
-		movie.removeGenre(genre);
-		movieRepo.registerMovie(movie);
+		String email = (String) s.getAttribute("email");
+		
+		if (email != null) {
+			User user = userRepo.getUser(email);
+			if (user != null && user.getAdmin()) {
+				movie.removeGenre(genre);
+			}
+		}
 		return "redirect:./edit?movie=" + movie.getName();
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public String deleteDistinction(
 			@RequestParam(value = "movie", required = true) Movie movie,
-			@RequestParam(value = "distinction", required = true) Distinction distinction) {
+			@RequestParam(value = "distinction", required = true) Distinction distinction,
+			HttpSession s) {
 
-		movie.removeDistinction(distinction);
-		movieRepo.registerMovie(movie);
+		String email = (String) s.getAttribute("email");
+		
+		if (email != null) {
+			User user = userRepo.getUser(email);
+			if (user != null && user.getAdmin())
+				movie.removeDistinction(distinction);
+		}
 		return "redirect:./edit?movie=" + movie.getName();
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public String addGenre(
 			@RequestParam(value = "movie", required = true) Movie movie,
-			@RequestParam(value = "genre", required = false) Genre genre) {
+			@RequestParam(value = "genre", required = false) Genre genre,
+			HttpSession s) {
 
-		if (genre == null) {
-			String error = "Error! Genre field was empty.";
-			return "redirect:./edit?movie=" + movie.getName() + "&error=" + error;	
-		}
+		String email = (String) s.getAttribute("email");
 		
-		movie.addGenre(genre);
-		movieRepo.registerMovie(movie);
+		if (email != null) {
+			User user = userRepo.getUser(email);
+			if (user != null && user.getAdmin()) {
+				if (genre == null) {
+					String error = "Error! Genre field was empty.";
+					return "redirect:./edit?movie=" + movie.getName() + "&error=" + error;	
+				} else {
+					movie.addGenre(genre);
+				}
+			}
+		}
 		return "redirect:./edit?movie=" + movie.getName();
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public String addDistinction(
 			@RequestParam(value = "movie", required = true) Movie movie,
-			@RequestParam(value = "distinction", required = false) Distinction distinction) {
+			@RequestParam(value = "distinction", required = false) Distinction distinction,
+			HttpSession s) {
 
-		if (distinction == null){
-			String error = "Error! Distinction field was empty.";
-			return "redirect:./edit?movie=" + movie.getName() + "&error=" + error;	
-		}
+		String email = (String) s.getAttribute("email");
 		
-		movie.addDistinction(distinction);
-		movieRepo.registerMovie(movie);
+		if (email != null) {
+			User user = userRepo.getUser(email);
+			if (user != null && user.getAdmin()) {
+				System.out.println("validations ok!");
+				if (distinction == null) {
+					String error = "Error! Distinction field was empty.";
+					return "redirect:./edit?movie=" + movie.getName() + "&error=" + error;	
+				} else {
+					System.out.println("adding distinction!");
+					movie.addDistinction(distinction);
+				}
+			}
+		}	
 		return "redirect:./edit?movie=" + movie.getName();
 	}
 	
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView edit() {
+	public ModelAndView edit(
+			@RequestParam(value = "movie", required = false) Movie movie,
+			@RequestParam(value = "error", required = false) String error,			
+			HttpSession s) {
+
+		String email = (String) s.getAttribute("email");
 		ModelAndView mav = new ModelAndView();
-		mav.addObject("movieForm", new MovieForm());
+		
+		if (email != null) {
+			User user = userRepo.getUser(email);
+			if (user != null && user.getAdmin()) {
+				MovieForm movieForm;
+				if (movie != null)
+					movieForm = new MovieForm(movie);
+				else
+					movieForm = new MovieForm();
+				
+				mav.addObject("movieForm", movieForm);
+				mav.addObject("isNew", (movie==null));
+				
+				if (error != null)
+					mav.addObject("error", error);
+			}
+		}
 		return mav;
 	}
 
@@ -227,21 +288,82 @@ public class MovieController {
 	public String edit(HttpServletRequest req, MovieForm movieForm,
 			Errors errors, HttpSession session) {
 
-		movieFormValidator.validate(movieForm, errors);
-
-		if (errors.hasErrors())
-			return null;
-
-		try {
-			movieRepo.registerMovie(movieForm.build());
-		} catch (Exception e) {
-			errors.rejectValue("email", "duplicated");
-			return null;
-		}
+		String email = (String) session.getAttribute("email");
 		
+		if (email != null) {
+			User user = userRepo.getUser(email);
+			if (user != null && user.getAdmin()) {
+				movieFormValidator.validate(movieForm, errors);
+		
+				if (errors.hasErrors())
+					return null;
+		
+				Movie oldMovie = movieRepo.getMovie(movieForm.getName());
+				Movie newMovie = movieForm.build();
+				if (oldMovie != null) {
+					oldMovie.updateData(newMovie);
+				} else {
+					movieRepo.registerMovie(newMovie);
+				}
+			}
+		}
 		return "redirect:./edit?movie=" + movieForm.getName();
 	}
-
+	
+	
+	@RequestMapping(method = RequestMethod.GET)
+	@ResponseBody
+	public byte[] image(
+			@RequestParam(value = "movie", required = true) Movie movie) {
+		return movie.getImage();
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public String changeImage(
+			@RequestParam(value = "movie", required = true) Movie movie,
+			@RequestParam("file") MultipartFile file, HttpSession session) {
+		
+		String error = null;
+		String email = (String) session.getAttribute("email");
+		
+		if (email != null) {
+			User user = userRepo.getUser(email);
+			if (user != null && user.getAdmin()) {
+				if (!file.isEmpty()) {
+					try {
+						byte[] imageInBytes = file.getBytes();
+						InputStream in = new ByteArrayInputStream(imageInBytes);
+						BufferedImage validImage = ImageIO.read(in);
+						movie.setImage(imageInBytes);
+					} catch (Exception e) {
+						error = "Invalid image file";
+					}
+				} else
+					error = "file is empty";
+			}
+		}
+	            
+		if (error == null)
+			return "redirect:./edit?movie=" + movie.getName();
+		else
+			return "redirect:./edit?movie=" + movie.getName() +"&error=" + error;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public String deleteImage(
+			@RequestParam(value = "movie", required = true) Movie movie,
+			HttpSession session) {
+		
+		String email = (String) session.getAttribute("email");
+		
+		if (email != null) {
+			User user = userRepo.getUser(email);
+			if (user != null && user.getAdmin())
+				movie.setImage(null);
+		}     
+		return "redirect:./edit?movie=" + movie.getName();
+		
+	}
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public String review(
@@ -269,7 +391,6 @@ public class MovieController {
 				} else {
 					Review r = new Review(user, movie, c, rating);
 					c.addReview(r);
-					movieRepo.registerMovie(movie);
 				}
 				
 			}
@@ -285,7 +406,7 @@ public class MovieController {
 	}
 	
 	@RequestMapping(value={"/","/home"}, method = RequestMethod.GET)
-	public ModelAndView home() {
+	public ModelAndView home(HttpSession s) {
 		
 		ModelAndView mav = new ModelAndView("home");
 		List<Movie> topMovies = movieRepo.getTop5();
@@ -295,6 +416,14 @@ public class MovieController {
 		mav.addObject("topmovies", topMovies);
 		mav.addObject("topratings", topRatings);
 		mav.addObject("movies", allMovies);
+		
+		String email = (String) s.getAttribute("email");
+		if (email != null) {
+			User user = userRepo.getUser(email);
+			if (user != null && user.getAdmin())
+				mav.addObject("isAdmin", true);
+			
+		}
 		return mav;
 	}
 	

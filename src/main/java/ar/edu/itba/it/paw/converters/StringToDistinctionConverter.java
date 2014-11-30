@@ -10,6 +10,7 @@ public class StringToDistinctionConverter implements Converter<String, Distincti
 
 	@Override
 	public Distinction convert(String arg0) {
+		System.out.println("Converting Distinction with description: " + arg0);
 		if(arg0 != null)
 			return new Distinction(arg0, false);
 		return null;
