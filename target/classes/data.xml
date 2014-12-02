@@ -15,6 +15,7 @@
 		<property name="locations">
 			<list>
 	            <value>classpath:setup.properties</value>
+	            <value>classpath:suggestions.properties</value>
         	</list>
 		</property>
 	</bean>
@@ -42,7 +43,6 @@
 		<property name="packagesToScan">
 			<list> <value>ar.edu.itba.it.paw.domain</value> </list>
 		</property>
-
 	</bean>
 	
 </beans>

@@ -13,7 +13,6 @@ public class StringToDateConverter implements Converter<String, Date> {
 	@Override
 	public Date convert(String arg0) {
 		try {
-			System.out.println(arg0);
 			return new SimpleDateFormat("yyyy-MM-DD").parse(arg0);
 		} catch (ParseException e) { return new Date(); }
 	}

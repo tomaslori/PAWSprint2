@@ -1,5 +1,8 @@
 <%@ include file="../header.jsp" %>
 
+<c:if test="${isEdit}">
+	<a href="./details?movie=${movieForm.name}"> back </a>
+</c:if>
 <div>
 	<h2>Movie edit</h2>
 	<div><c:out value="${error}" /></div>
@@ -54,7 +57,7 @@
 		</div>
 	</form:form>
 	
-	<c:if test="${!isNew}">	 
+	<c:if test="${isEdit}">	 
 		<h2> Genres </h2>
 		<c:forEach items="${movieForm.genres}" var="genre">
 			<c:out value="${genre.name}"/>
@@ -67,7 +70,7 @@
 		<form method="POST" action="addGenre">
 			<input type="hidden" name="movie" value="${movieForm.name}">
 			<label for="name">Name:</label>
-			<input type="text" name="name" value="${name}"/>
+			<input type="text" name="genre"/>
 			<input type="submit" name="submit" value="Add" />
 		</form>
 		
@@ -83,12 +86,12 @@
 		<form method="POST" action="addDistinction">
 			<input type="hidden" name="movie" value="${movieForm.name}">
 			<label for="name">Name:</label>
-			<input type="text" name="name" value="${name}"/>
+			<input type="text" name="distinction"/>
 			<input type="submit" name="submit" value="Add" />
 		</form>
 		
 		<c:if test="${!movieForm.imageIsEmpty}">
-			<img src="../image?movie=<c:out value="${movieForm.name}" />"
+			<img src="data:image/jpeg;base64,${movieForm.imageString}"
 				alt="movie_picture" />
 			<form method="POST" action="deleteImage">
 				<input type="hidden" name="movie" value="${movieForm.name}">

@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.DatatypeConverter;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
@@ -131,6 +132,10 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 	public byte[] getImage() {
 		return image;
 	}
+	
+	public String getImageString() {
+		return DatatypeConverter.printBase64Binary(image);
+	}
 
 	public void setImage(byte[] image) {
 		this.image = image;
@@ -217,13 +222,10 @@ public class Movie extends PersistentEntity implements Comparable<Movie> {
 	
 	public void updateData(Movie movie) {
 		setName(movie.getName());
-		setGenres(movie.getGenres());
 		setDirector(movie.getDirector());
 		setDuration(movie.getDuration());
 		setDescription(movie.getDescription());
 		setReleaseDate(movie.getReleaseDate());
-		setComments(movie.getComments());
-		setDistinctions(movie.getDistinctions());
 	}
 	
 	@Override

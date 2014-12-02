@@ -75,4 +75,31 @@ public class HibernateMovieRepo extends AbstractHibernateRepo implements
 	public Movie getMovie(int id) {
 		return super.get(Movie.class, id);
 	}
+
+	@Override
+	public Movie getSuggestion(Genre genre, int minRating, int minUsers) {
+		List<Movie> allMovies = getAllMovies();
+		List<Movie> results = new ArrayList<Movie>();
+		for (Movie movie :allMovies)
+			if(checkGenre(movie, genre) && checkRatings(movie, minRating, minUsers))
+				results.add(movie);
+		
+		return (results.size()==0)? null : results.get((int)(Math.random()*results.size()));
+	}
+	
+	private boolean checkGenre(Movie movie, Genre genre) {
+		for (Genre g :movie.getGenres())
+			if(genre.equals(g))
+				return true;
+		return false;
+	}
+	
+	private boolean checkRatings(Movie movie, int minRating, int minUsers) {
+		int sum = 0;
+		for (Comment c :movie.getComments()) {
+			if (c.getRating() >= minRating)
+				sum++;
+		}
+		return sum>=minUsers;
+	}
 }

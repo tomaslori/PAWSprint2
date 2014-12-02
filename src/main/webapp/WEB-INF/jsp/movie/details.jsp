@@ -9,6 +9,10 @@
 						<input type="submit" name="submit" value="Edit" />
 				</form>
 			</c:if>
+			<c:if test="${!movie.imageIsEmpty}">	 
+				<img src="data:image/jpeg;base64,${movie.imageString}"
+				alt="movie_picture" />
+			</c:if>
 			<h6>Release Date:</h6>
 			<h5>
 				<c:out value="${movie.releaseDate}" />

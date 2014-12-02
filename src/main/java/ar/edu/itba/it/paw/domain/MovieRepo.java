@@ -15,4 +15,6 @@ public interface MovieRepo {
 	public void registerMovie(Movie movie);
 	
 	public Movie getMovie(int id);
+	
+	public Movie getSuggestion(Genre genre, int minRating, int minUsers);
 }

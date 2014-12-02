@@ -1,17 +1,14 @@
 package ar.edu.itba.it.paw.web;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +35,11 @@ public class MovieController {
 	private static final int MAX_DESCRIPTION_LENGTH = 124;
 	private static final int MIN_RATING = 0;
 	private static final int MAX_RATING = 5;
+	
+	@Value( "${sugg.minRating}" )
+	private int MIN_SUG_RATING;
+	@Value( "${sugg.minUsers}" )
+	private int MIN_USERS;
 
 	private UserRepo userRepo;
 	private MovieRepo movieRepo;
@@ -275,7 +277,7 @@ public class MovieController {
 					movieForm = new MovieForm();
 				
 				mav.addObject("movieForm", movieForm);
-				mav.addObject("isNew", (movie==null));
+				mav.addObject("isEdit", (movie!=null));
 				
 				if (error != null)
 					mav.addObject("error", error);
@@ -302,6 +304,7 @@ public class MovieController {
 				Movie newMovie = movieForm.build();
 				if (oldMovie != null) {
 					oldMovie.updateData(newMovie);
+					movieRepo.registerMovie(oldMovie);
 				} else {
 					movieRepo.registerMovie(newMovie);
 				}
@@ -315,6 +318,7 @@ public class MovieController {
 	@ResponseBody
 	public byte[] image(
 			@RequestParam(value = "movie", required = true) Movie movie) {
+		System.out.println("getting an img request for " + movie.getName());
 		return movie.getImage();
 	}
 	
@@ -331,10 +335,12 @@ public class MovieController {
 			if (user != null && user.getAdmin()) {
 				if (!file.isEmpty()) {
 					try {
-						byte[] imageInBytes = file.getBytes();
-						InputStream in = new ByteArrayInputStream(imageInBytes);
-						BufferedImage validImage = ImageIO.read(in);
-						movie.setImage(imageInBytes);
+						if (file.getOriginalFilename().endsWith(".jpg")) {
+							byte[] imageInBytes = file.getBytes();
+							movie.setImage(imageInBytes);
+						}
+						else
+							error = "Invalid image file";
 					} catch (Exception e) {
 						error = "Invalid image file";
 					}
@@ -451,6 +457,15 @@ public class MovieController {
 		mav.addObject("movies", movies);
 		return mav;
 	}
-
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public String suggestion(
+			@RequestParam(value = "genre", required = true) Genre genre) {
+		
+		Movie movie = movieRepo.getSuggestion(genre, MIN_SUG_RATING, MIN_USERS);
+		if (movie == null)
+			return "redirect:../home";
+		return "redirect:./details?movie=" + movie.getName();
+	}
 	
 }

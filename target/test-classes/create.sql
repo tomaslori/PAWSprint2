@@ -1,76 +1,71 @@
--- Table: users
 
--- DROP TABLE users;
+-- Table: movies_distinctions
 
-CREATE TABLE users
+-- DROP TABLE movies_distinctions;
+
+CREATE TABLE movies_distinctions
 (
-  id serial NOT NULL,
-  name character varying(32) NOT NULL,
-  surname character varying(32) NOT NULL,
-  password character varying(16) NOT NULL,
-  email character varying(64) NOT NULL,
-  secretquestion character varying(64) NOT NULL,
-  secretanswer character varying(64) NOT NULL,
-  birthdate date NOT NULL,
-  vip boolean NOT NULL,
-  CONSTRAINT users_pkey PRIMARY KEY (id),
-  CONSTRAINT users_email_key UNIQUE (email),
-  CONSTRAINT users_password_check CHECK (char_length(password::text) >= 8 AND char_length(password::text) <= 16)
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE users
-  OWNER TO postgres;
-
--------------------------------------------------------------------------------------
-
--- Table: movies
-
--- DROP TABLE movies;
-
-CREATE TABLE movies
-(
-  id serial NOT NULL,
-  name character varying(64) NOT NULL,
-  genre character varying(64) NOT NULL,
-  director character varying(64) NOT NULL,
-  duration integer NOT NULL,
-  description character varying(256) NOT NULL,
-  releasedate date NOT NULL,
-  CONSTRAINT movies_pkey PRIMARY KEY (id),
-  CONSTRAINT movies_name_key UNIQUE (name)
-)
-WITH (
-  OIDS=FALSE
-);
-ALTER TABLE movies
-  OWNER TO postgres;
-
--------------------------------------------------------------------------------------
-
--- Table: comments
-
--- DROP TABLE comments;
-
-CREATE TABLE comments
-(
-  "user" serial NOT NULL,
-  movie serial NOT NULL,
-  rating integer NOT NULL,
-  description character varying(256) NOT NULL,
-  id serial NOT NULL,
-  CONSTRAINT pk_id PRIMARY KEY (id),
-  CONSTRAINT fk_movie FOREIGN KEY (movie)
+  movies_id integer NOT NULL,
+  gotprized boolean NOT NULL,
+  name character varying(255) NOT NULL,
+  CONSTRAINT fkf1bda1e3b6daa239 FOREIGN KEY (movies_id)
       REFERENCES movies (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE CASCADE,
-  CONSTRAINT fk_user FOREIGN KEY ("user")
-      REFERENCES users (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE CASCADE,
-  CONSTRAINT rating_range CHECK (rating >= 0 AND rating <= 5)
+      ON UPDATE NO ACTION ON DELETE NO ACTION
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE comments
-  OWNER TO postgres;
+ALTER TABLE movies_distinctions
+  OWNER TO paw;
+
+-----------------------------------------------------------------------
+
+-- Table: reviews
+
+-- DROP TABLE reviews;
+
+CREATE TABLE reviews
+(
+  id serial NOT NULL,
+  rating integer NOT NULL,
+  comment_id integer,
+  movie_id integer,
+  owner_id integer,
+  CONSTRAINT reviews_pkey PRIMARY KEY (id),
+  CONSTRAINT fk418ff41b24b1d040 FOREIGN KEY (owner_id)
+  REFERENCES users (id) MATCH SIMPLE
+  ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT fk418ff41b6a0a672c FOREIGN KEY (movie_id)
+  REFERENCES movies (id) MATCH SIMPLE
+  ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT fk418ff41ba23a504c FOREIGN KEY (comment_id)
+  REFERENCES comments (id) MATCH SIMPLE
+  ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE reviews
+  OWNER TO paw;
+
+------------------------------------------------------------------------
+
+-- Table: movies_genres
+
+-- DROP TABLE movies_genres;
+
+CREATE TABLE movies_genres
+(
+  movies_id integer NOT NULL,
+  name character varying(255) NOT NULL,
+  CONSTRAINT movies_genres_pkey PRIMARY KEY (movies_id, name),
+  CONSTRAINT fk37775bccb6daa239 FOREIGN KEY (movies_id)
+  REFERENCES movies (id) MATCH SIMPLE
+  ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE movies_genres
+	  OWNER TO paw;
+

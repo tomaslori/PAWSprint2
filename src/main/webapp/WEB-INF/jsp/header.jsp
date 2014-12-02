@@ -27,6 +27,12 @@
 						<input type="submit" name="submit" value="Search" />
 				</form>
 			</div>
+			<div>
+				<form method="GET" action="${pageContext.request.contextPath}/bin/movie/suggestion">
+						<input type="text"  placeholder="Get suggestion with genre" name="genre" />
+						<input type="submit" name="submit" value="Get suggestion!" />
+				</form>
+			</div>
 			<div >
 				<div>
 					<a href="${pageContext.request.contextPath}/bin/home"> home </a>

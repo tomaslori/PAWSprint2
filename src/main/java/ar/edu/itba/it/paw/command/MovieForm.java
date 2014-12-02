@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.xml.bind.DatatypeConverter;
+
 import ar.edu.itba.it.paw.domain.Comment;
 import ar.edu.itba.it.paw.domain.Distinction;
 import ar.edu.itba.it.paw.domain.Genre;
@@ -73,29 +75,20 @@ public class MovieForm {
 			this.duration = duration;
 	}
 	
-	public String getReleaseDate() {
-		
-		if (releaseDate == null)
-			return "";
-		
-		int day =  releaseDate.getDate();
-		int month = releaseDate.getMonth() +1;
-		int year = releaseDate.getYear() + 1900;
-		String dateStr = year + "-" + ((month<10)? "0"+month:month) + "-" + ((day<10)? "0"+day : day);
-		return dateStr;
+	public Date getReleaseDate() {
+		return releaseDate;
 	}
 
 	public void setReleaseDate(Date releaseDate) {
-		System.out.println("MovieForm got a releaseDate!!!");
 		this.releaseDate = releaseDate;
 	}
 
-//	public void setReleaseDate(String releaseDate) {
-//		System.out.println("MovieForm got a releaseDate of type string!!! " + releaseDate );
-//	}
-
-	public String getImage() {
-		return new String();
+	public byte[] getImage() {
+		return image;
+	}
+	
+	public String getImageString() {
+		return DatatypeConverter.printBase64Binary(image);
 	}
 
 	public void setImage(byte[] image) {
@@ -131,9 +124,6 @@ public class MovieForm {
 	}
 
 	public Movie build() {
-		String date = (releaseDate != null)? releaseDate.getDay() + "/" + releaseDate.getMonth() + "/" + releaseDate.getYear() : "noDate";
-		System.out.println("DEBUG name: " + name + ", releaseDate: " + date + ", director: " + director +
-				", duration: " + duration + ", description: " + description);
 		return new Movie(name, releaseDate, genres, director, duration, description, image, comments, distinctions);
 	}
 }
